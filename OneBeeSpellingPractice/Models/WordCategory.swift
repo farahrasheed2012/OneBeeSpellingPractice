@@ -60,3 +60,22 @@ enum WordDifficulty: Int, CaseIterable, Identifiable {
         }
     }
 }
+
+/// User-facing filter: which difficulty levels to include in practice (All = no filter).
+enum DifficultyFilter: String, CaseIterable, Identifiable {
+    case all = "all"
+    case easy = "easy"
+    case medium = "medium"
+    case hard = "hard"
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .all: return "All"
+        case .easy: return "Easy"
+        case .medium: return "Medium"
+        case .hard: return "Hard"
+        }
+    }
+}

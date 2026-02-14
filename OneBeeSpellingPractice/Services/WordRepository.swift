@@ -34,25 +34,37 @@ final class WordRepository: ObservableObject {
         allWords.filter { $0.difficulty == difficulty }
     }
     
+    /// Words filtered by user's difficulty setting (Easy, Medium, Hard, or All).
+    func words(forFilter filter: DifficultyFilter) -> [SpellingWord] {
+        switch filter {
+        case .all: return allWords
+        case .easy: return words(byDifficulty: .easy)
+        case .medium: return words(byDifficulty: .medium)
+        case .hard: return words(byDifficulty: .hard)
+        }
+    }
+    
     /// Easy first, then medium, then hard. Nil difficulty last.
-    var wordsByDifficultyAscending: [SpellingWord] {
-        allWords.sorted { (a, b) in
+    func wordsByDifficultyAscending(from pool: [SpellingWord]) -> [SpellingWord] {
+        pool.sorted { (a, b) in
             let da = a.difficulty?.rawValue ?? 4
             let db = b.difficulty?.rawValue ?? 4
             return da < db
         }
     }
     
-    /// For smart review: words the child has gotten wrong most often.
-    func wordsNeedingWork(progressStore: ProgressStore) -> [SpellingWord] {
-        progressStore.wordsNeedingWork(from: allWords)
+    /// For smart review: words the child has gotten wrong most often (from given pool).
+    func wordsNeedingWork(progressStore: ProgressStore, from pool: [SpellingWord]) -> [SpellingWord] {
+        progressStore.wordsNeedingWork(from: pool)
     }
     
-    /// Limit words per session (e.g. parent setting).
-    func sessionWords(limit: Int, progressStore: ProgressStore, preferNeedingWork: Bool) -> [SpellingWord] {
-        let pool = preferNeedingWork ? wordsNeedingWork(progressStore: progressStore) : allWords
-        let needWork = preferNeedingWork && !pool.isEmpty ? Array(pool.prefix(limit)) : []
-        if !needWork.isEmpty { return needWork }
-        return Array(wordsByDifficultyAscending.prefix(limit))
+    /// Limit words per session; filtered by difficulty (Easy / Medium / Hard / All).
+    func sessionWords(limit: Int, progressStore: ProgressStore, preferNeedingWork: Bool, difficultyFilter: DifficultyFilter) -> [SpellingWord] {
+        let pool = words(forFilter: difficultyFilter)
+        let sortedPool = wordsByDifficultyAscending(from: pool)
+        let needWork = preferNeedingWork ? wordsNeedingWork(progressStore: progressStore, from: pool) : []
+        let needWorkLimited = preferNeedingWork && !needWork.isEmpty ? Array(needWork.prefix(limit)) : []
+        if !needWorkLimited.isEmpty { return needWorkLimited }
+        return Array(sortedPool.prefix(limit))
     }
 }

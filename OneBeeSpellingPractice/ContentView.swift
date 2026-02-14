@@ -59,30 +59,35 @@ struct PracticeTabView: View {
     @EnvironmentObject var wordRepository: WordRepository
 
     private var sessionWords: [SpellingWord] {
-        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : wordRepository.allWords.count
-        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true)
+        let filtered = wordRepository.words(forFilter: settings.difficultyFilter)
+        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : filtered.count
+        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true, difficultyFilter: settings.difficultyFilter)
+    }
+    
+    private var fallbackWords: [SpellingWord] {
+        wordRepository.words(forFilter: settings.difficultyFilter)
     }
 
     var body: some View {
         NavigationView {
             List {
                 Section {
-                    NavigationLink(destination: PracticeView().environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Spelling Quiz", systemImage: "pencil.and.outline")
                     }
-                    NavigationLink(destination: MultipleChoiceView().environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Multiple Choice", systemImage: "list.bullet")
                     }
-                    NavigationLink(destination: LetterByLetterView(words: sessionWords.isEmpty ? wordRepository.allWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: LetterByLetterView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Letter by Letter", systemImage: "textformat.abc")
                     }
-                    NavigationLink(destination: FillInBlankView(words: sessionWords.isEmpty ? wordRepository.allWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: FillInBlankView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Fill in the Blank", systemImage: "line.3.horizontal.decrease.circle")
                     }
-                    NavigationLink(destination: FlashcardView(words: sessionWords.isEmpty ? wordRepository.allWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: FlashcardView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Flashcards", systemImage: "rectangle.stack")
                     }
-                    NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? wordRepository.allWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                    NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Listening Mode", systemImage: "ear")
                     }
                 } header: {

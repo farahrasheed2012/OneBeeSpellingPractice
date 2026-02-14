@@ -31,6 +31,12 @@ struct SettingsView: View {
                         Toggle("Dyslexia-friendly font", isOn: $settings.dyslexiaFontEnabled)
                     }
                     Section(header: Text("Practice")) {
+                        Picker("Difficulty level", selection: $settings.difficultyFilter) {
+                            ForEach(DifficultyFilter.allCases) { filter in
+                                Text(filter.displayName).tag(filter)
+                            }
+                        }
+                        .onChange(of: settings.difficultyFilter) { _ in settings.save() }
                         Stepper("Words per session: \(settings.wordsPerSession)", value: $settings.wordsPerSession, in: 5...50, step: 5)
                             .onChange(of: settings.wordsPerSession) { _ in settings.persistWordsPerSession() }
                         Toggle("Daily reminder", isOn: $settings.reminderEnabled)

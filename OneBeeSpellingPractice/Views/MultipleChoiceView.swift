@@ -6,10 +6,14 @@
 import SwiftUI
 
 struct MultipleChoiceView: View {
+    let words: [SpellingWord]
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
-    private let words = OneBeeWords.all
     private let speech = SpeechService()
+    
+    init(words: [SpellingWord] = OneBeeWords.all) {
+        self.words = words
+    }
     
     @State private var currentIndex = 0
     @State private var selectedOption: String?
@@ -19,9 +23,42 @@ struct MultipleChoiceView: View {
     @State private var options: [String] = []
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
-    private var currentWord: SpellingWord { words[currentIndex % words.count] }
+    private var currentWord: SpellingWord { words[currentIndex % max(words.count, 1)] }
     
     var body: some View {
+        Group {
+            if words.isEmpty {
+                emptyWordsView
+            } else {
+                mainContent
+            }
+        }
+        .navigationTitle("📋 Multiple Choice")
+        .navigationBarTitleDisplayMode(.large)
+        .onAppear {
+            if !words.isEmpty {
+                generateOptions()
+                progressStore.recordSession(minutes: 0)
+            }
+        }
+    }
+    
+    private var emptyWordsView: some View {
+        VStack(spacing: 16) {
+            Text("No words for this difficulty")
+                .font(.title2)
+                .foregroundColor(theme.primaryText)
+            Text("Change the difficulty level in Settings, or try \"All\".")
+                .font(.body)
+                .foregroundColor(theme.secondaryText)
+                .multilineTextAlignment(.center)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.surface)
+    }
+    
+    private var mainContent: some View {
         ZStack {
             theme.surface.ignoresSafeArea()
             
@@ -49,12 +86,6 @@ struct MultipleChoiceView: View {
                     isVisible: $showCelebration
                 )
             }
-        }
-        .navigationTitle("📋 Multiple Choice")
-        .navigationBarTitleDisplayMode(.large)
-        .onAppear {
-            generateOptions()
-            progressStore.recordSession(minutes: 0)
         }
     }
     
@@ -191,7 +222,7 @@ struct MultipleChoiceView: View {
 struct MultipleChoiceView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            MultipleChoiceView()
+            MultipleChoiceView(words: OneBeeWords.all)
                 .environmentObject(ProgressStore())
                 .environmentObject(SettingsStore())
         }

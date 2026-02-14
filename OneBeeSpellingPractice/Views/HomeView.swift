@@ -14,8 +14,13 @@ struct HomeView: View {
     @EnvironmentObject var avatarStore: AvatarStore
     @EnvironmentObject var leaderboardStore: LeaderboardStore
     private var sessionWords: [SpellingWord] {
-        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : wordRepository.allWords.count
-        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true)
+        let filtered = wordRepository.words(forFilter: settings.difficultyFilter)
+        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : filtered.count
+        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true, difficultyFilter: settings.difficultyFilter)
+    }
+    
+    private var fallbackWords: [SpellingWord] {
+        wordRepository.words(forFilter: settings.difficultyFilter)
     }
 
     var body: some View {
@@ -44,7 +49,7 @@ struct HomeView: View {
     private var headerCard: some View {
         HStack(alignment: .top, spacing: AppLayout.padding) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Hi, Speller!")
+                Text("Hi, Inaya!")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -161,10 +166,10 @@ struct HomeView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
 
-            NavigationLink(destination: PracticeView().environmentObject(progressStore).environmentObject(settings)) {
+            NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                 rowLabel("Spelling Quiz", systemImage: "pencil.and.outline")
             }
-            NavigationLink(destination: MultipleChoiceView().environmentObject(progressStore).environmentObject(settings)) {
+            NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                 rowLabel("Multiple Choice", systemImage: "list.bullet")
             }
             NavigationLink(destination: WordListView().environmentObject(progressStore).environmentObject(settings).environmentObject(wordRepository)) {
@@ -219,17 +224,22 @@ struct PracticeModePickerView: View {
     @Binding var isPresented: Bool
 
     private var sessionWords: [SpellingWord] {
-        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : wordRepository.allWords.count
-        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true)
+        let filtered = wordRepository.words(forFilter: settings.difficultyFilter)
+        let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : filtered.count
+        return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true, difficultyFilter: settings.difficultyFilter)
+    }
+    
+    private var fallbackWords: [SpellingWord] {
+        wordRepository.words(forFilter: settings.difficultyFilter)
     }
 
     var body: some View {
         List {
             Section(header: Text("Choose a practice mode")) {
-                NavigationLink(destination: PracticeView().environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
+                NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
                     Label("Spelling Quiz", systemImage: "pencil.and.outline")
                 }
-                NavigationLink(destination: MultipleChoiceView().environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
+                NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
                     Label("Multiple Choice", systemImage: "list.bullet")
                 }
             }

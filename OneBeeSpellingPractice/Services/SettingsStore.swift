@@ -16,6 +16,7 @@ final class SettingsStore: ObservableObject {
     private let highContrastKey = "onebee_high_contrast"
     private let hasCompletedOnboardingKey = "onebee_onboarding_done"
     private let wordsPerSessionKey = "onebee_words_per_session"
+    private let difficultyFilterKey = "onebee_difficulty_filter"
     private let reminderEnabledKey = "onebee_reminder_enabled"
     private let reminderHourKey = "onebee_reminder_hour"
     private let reminderMinuteKey = "onebee_reminder_minute"
@@ -32,6 +33,8 @@ final class SettingsStore: ObservableObject {
     @Published var hasCompletedOnboarding: Bool = false
     /// Max words per practice session (0 = no limit).
     @Published var wordsPerSession: Int = 10
+    /// Filter practice to Easy, Medium, Hard, or All.
+    @Published var difficultyFilter: DifficultyFilter = .all
     @Published var reminderEnabled: Bool = false
     @Published var reminderHour: Int = 18
     @Published var reminderMinute: Int = 0
@@ -82,6 +85,11 @@ final class SettingsStore: ObservableObject {
         highContrastEnabled = UserDefaults.standard.bool(forKey: highContrastKey)
         hasCompletedOnboarding = UserDefaults.standard.bool(forKey: hasCompletedOnboardingKey)
         wordsPerSession = UserDefaults.standard.object(forKey: wordsPerSessionKey) as? Int ?? 10
+        if let raw = UserDefaults.standard.string(forKey: difficultyFilterKey), let filter = DifficultyFilter(rawValue: raw) {
+            difficultyFilter = filter
+        } else {
+            difficultyFilter = .all
+        }
         reminderEnabled = UserDefaults.standard.bool(forKey: reminderEnabledKey)
         reminderHour = UserDefaults.standard.object(forKey: reminderHourKey) as? Int ?? 18
         reminderMinute = UserDefaults.standard.object(forKey: reminderMinuteKey) as? Int ?? 0
@@ -89,7 +97,7 @@ final class SettingsStore: ObservableObject {
         speechRateStyle = UserDefaults.standard.string(forKey: speechRateKey) ?? "normal"
     }
     
-    private func save() {
+    func save() {
         UserDefaults.standard.set(themeId, forKey: themeKey)
         UserDefaults.standard.set(darkModeEnabled, forKey: darkModeKey)
         UserDefaults.standard.set(hapticEnabled, forKey: hapticKey)
@@ -99,6 +107,7 @@ final class SettingsStore: ObservableObject {
         UserDefaults.standard.set(highContrastEnabled, forKey: highContrastKey)
         UserDefaults.standard.set(hasCompletedOnboarding, forKey: hasCompletedOnboardingKey)
         UserDefaults.standard.set(wordsPerSession, forKey: wordsPerSessionKey)
+        UserDefaults.standard.set(difficultyFilter.rawValue, forKey: difficultyFilterKey)
         UserDefaults.standard.set(reminderEnabled, forKey: reminderEnabledKey)
         UserDefaults.standard.set(reminderHour, forKey: reminderHourKey)
         UserDefaults.standard.set(reminderMinute, forKey: reminderMinuteKey)

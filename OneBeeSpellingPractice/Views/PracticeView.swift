@@ -6,9 +6,13 @@
 import SwiftUI
 
 struct PracticeView: View {
-    let words = OneBeeWords.all
+    let words: [SpellingWord]
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
+    
+    init(words: [SpellingWord] = OneBeeWords.all) {
+        self.words = words
+    }
     @State private var currentIndex = 0
     @State private var isWordVisible = true
     @State private var userInput = ""
@@ -20,10 +24,36 @@ struct PracticeView: View {
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     private var currentWord: SpellingWord {
-        words[currentIndex % words.count]
+        words[currentIndex % max(words.count, 1)]
     }
     
     var body: some View {
+        if words.isEmpty {
+            emptyWordsView
+        } else {
+            mainContent
+        }
+    }
+    
+    private var emptyWordsView: some View {
+        NavigationView {
+            VStack(spacing: 16) {
+                Text("No words for this difficulty")
+                    .font(.title2)
+                    .foregroundColor(theme.primaryText)
+                Text("Change the difficulty level in Settings, or try \"All\".")
+                    .font(.body)
+                    .foregroundColor(theme.secondaryText)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.surface)
+            .navigationTitle("Practice")
+        }
+    }
+    
+    private var mainContent: some View {
         NavigationView {
             ZStack {
                 theme.surface
@@ -234,7 +264,7 @@ struct PracticeView: View {
 }
 
 #Preview {
-    PracticeView()
+    PracticeView(words: OneBeeWords.all)
         .environmentObject(ProgressStore())
         .environmentObject(SettingsStore())
 }
