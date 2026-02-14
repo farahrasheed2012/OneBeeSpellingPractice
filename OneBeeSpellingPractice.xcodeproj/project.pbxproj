@@ -1,0 +1,142 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		O1B001 /* OneBeeSpellingPracticeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F001 /* OneBeeSpellingPracticeApp.swift */; };
+		O1B002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F002 /* ContentView.swift */; };
+		O1B003 /* SpellingWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F003 /* SpellingWord.swift */; };
+		O1B004 /* OneBeeWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F004 /* OneBeeWords.swift */; };
+		O1B005 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F005 /* ProgressStore.swift */; };
+		O1B006 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F006 /* SpeechService.swift */; };
+		O1B007 /* WordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F007 /* WordListView.swift */; };
+		O1B008 /* WordDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F008 /* WordDetailView.swift */; };
+		O1B009 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F009 /* PracticeView.swift */; };
+		O1B00A /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F00A /* ProgressView.swift */; };
+		O1B00B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = O2F00B /* Assets.xcassets */; };
+		O1B00C /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F00D /* ThemePalette.swift */; };
+		O1B00D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F00E /* SettingsStore.swift */; };
+		O1B00E /* EncouragingMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F00F /* EncouragingMessages.swift */; };
+		O1B00F /* CelebrationOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F010 /* CelebrationOverlayView.swift */; };
+		O1B010 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F011 /* HomeView.swift */; };
+		O1B011 /* MultipleChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F012 /* MultipleChoiceView.swift */; };
+		O1B012 /* ParentDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F013 /* ParentDashboardView.swift */; };
+		O1B013 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F014 /* SettingsView.swift */; };
+		O1B014 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F015 /* OnboardingView.swift */; };
+		O1B015 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F016 /* Badge.swift */; };
+		O1B016 /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F017 /* Avatar.swift */; };
+		O1B017 /* WordCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F018 /* WordCategory.swift */; };
+		O1B018 /* SiblingProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F019 /* SiblingProfile.swift */; };
+		O1B019 /* AchievementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01A /* AchievementStore.swift */; };
+		O1B01A /* CustomWordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01B /* CustomWordStore.swift */; };
+		O1B01B /* WordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01C /* WordRepository.swift */; };
+		O1B01C /* AvatarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01D /* AvatarStore.swift */; };
+		O1B01D /* LeaderboardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01E /* LeaderboardStore.swift */; };
+		O1B01E /* NeverCapitalizationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F01F /* NeverCapitalizationModifier.swift */; };
+		O1B01F /* LetterByLetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F020 /* LetterByLetterView.swift */; };
+		O1B020 /* FillInBlankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F021 /* FillInBlankView.swift */; };
+		O1B021 /* FlashcardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F022 /* FlashcardView.swift */; };
+		O1B022 /* ListeningModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F023 /* ListeningModeView.swift */; };
+		O1B023 /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F024 /* BadgesView.swift */; };
+		O1B024 /* CertificateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F025 /* CertificateView.swift */; };
+		O1B025 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F026 /* LeaderboardView.swift */; };
+		O1B026 /* AvatarCustomizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F027 /* AvatarCustomizeView.swift */; };
+		O1B027 /* SoundEffectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F028 /* SoundEffectService.swift */; };
+		O1B028 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F029 /* NotificationService.swift */; };
+		O1B029 /* AppLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = O2F02A /* AppLayout.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		O0APP /* OneBeeSpellingPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneBeeSpellingPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		O2F001 /* OneBeeSpellingPracticeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneBeeSpellingPracticeApp.swift; sourceTree = "<group>"; };
+		O2F002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		O2F003 /* SpellingWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellingWord.swift; sourceTree = "<group>"; };
+		O2F004 /* OneBeeWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneBeeWords.swift; sourceTree = "<group>"; };
+		O2F005 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
+		O2F006 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		O2F007 /* WordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordListView.swift; sourceTree = "<group>"; };
+		O2F008 /* WordDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDetailView.swift; sourceTree = "<group>"; };
+		O2F009 /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
+		O2F00A /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		O2F00B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		O2F00C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		O2F00D /* ThemePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePalette.swift; sourceTree = "<group>"; };
+		O2F00E /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		O2F00F /* EncouragingMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncouragingMessages.swift; sourceTree = "<group>"; };
+		O2F010 /* CelebrationOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationOverlayView.swift; sourceTree = "<group>"; };
+		O2F011 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		O2F012 /* MultipleChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleChoiceView.swift; sourceTree = "<group>"; };
+		O2F013 /* ParentDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentDashboardView.swift; sourceTree = "<group>"; };
+		O2F014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		O2F015 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		O2F016 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
+		O2F017 /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
+		O2F018 /* WordCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCategory.swift; sourceTree = "<group>"; };
+		O2F019 /* SiblingProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiblingProfile.swift; sourceTree = "<group>"; };
+		O2F01A /* AchievementStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementStore.swift; sourceTree = "<group>"; };
+		O2F01B /* CustomWordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWordStore.swift; sourceTree = "<group>"; };
+		O2F01C /* WordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordRepository.swift; sourceTree = "<group>"; };
+		O2F01D /* AvatarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarStore.swift; sourceTree = "<group>"; };
+		O2F01E /* LeaderboardStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardStore.swift; sourceTree = "<group>"; };
+		O2F01F /* NeverCapitalizationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeverCapitalizationModifier.swift; sourceTree = "<group>"; };
+		O2F020 /* LetterByLetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterByLetterView.swift; sourceTree = "<group>"; };
+		O2F021 /* FillInBlankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillInBlankView.swift; sourceTree = "<group>"; };
+		O2F022 /* FlashcardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardView.swift; sourceTree = "<group>"; };
+		O2F023 /* ListeningModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningModeView.swift; sourceTree = "<group>"; };
+		O2F024 /* BadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesView.swift; sourceTree = "<group>"; };
+		O2F025 /* CertificateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateView.swift; sourceTree = "<group>"; };
+		O2F026 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		O2F027 /* AvatarCustomizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarCustomizeView.swift; sourceTree = "<group>"; };
+		O2F028 /* SoundEffectService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectService.swift; sourceTree = "<group>"; };
+		O2F029 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		O2F02A /* AppLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLayout.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		O1F001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		O3G001 = {isa = PBXGroup; children = (O3G002 /* OneBeeSpellingPractice */, O3G007 /* Products */); sourceTree = "<group>"; };
+		O3G002 /* OneBeeSpellingPractice */ = {isa = PBXGroup; children = (O2F001 /* OneBeeSpellingPracticeApp.swift */, O2F002 /* ContentView.swift */, O3G003 /* Models */, O3G004 /* Data */, O3G005 /* Services */, O3G008 /* Helpers */, O3G006 /* Views */, O2F00B /* Assets.xcassets */, O2F00C /* Info.plist */); path = OneBeeSpellingPractice; sourceTree = "<group>"; };
+		O3G003 /* Models */ = {isa = PBXGroup; children = (O2F02A /* AppLayout.swift */, O2F003 /* SpellingWord.swift */, O2F00D /* ThemePalette.swift */, O2F016 /* Badge.swift */, O2F017 /* Avatar.swift */, O2F018 /* WordCategory.swift */, O2F019 /* SiblingProfile.swift */); path = Models; sourceTree = "<group>"; };
+		O3G004 /* Data */ = {isa = PBXGroup; children = (O2F004 /* OneBeeWords.swift */); path = Data; sourceTree = "<group>"; };
+		O3G005 /* Services */ = {isa = PBXGroup; children = (O2F005 /* ProgressStore.swift */, O2F006 /* SpeechService.swift */, O2F00E /* SettingsStore.swift */, O2F01A /* AchievementStore.swift */, O2F01B /* CustomWordStore.swift */, O2F01C /* WordRepository.swift */, O2F01D /* AvatarStore.swift */, O2F01E /* LeaderboardStore.swift */, O2F028 /* SoundEffectService.swift */, O2F029 /* NotificationService.swift */); path = Services; sourceTree = "<group>"; };
+		O3G008 /* Helpers */ = {isa = PBXGroup; children = (O2F00F /* EncouragingMessages.swift */, O2F01F /* NeverCapitalizationModifier.swift */); path = Helpers; sourceTree = "<group>"; };
+		O3G006 /* Views */ = {isa = PBXGroup; children = (O2F007 /* WordListView.swift */, O2F008 /* WordDetailView.swift */, O2F009 /* PracticeView.swift */, O2F00A /* ProgressView.swift */, O2F010 /* CelebrationOverlayView.swift */, O2F011 /* HomeView.swift */, O2F012 /* MultipleChoiceView.swift */, O2F013 /* ParentDashboardView.swift */, O2F014 /* SettingsView.swift */, O2F015 /* OnboardingView.swift */, O2F020 /* LetterByLetterView.swift */, O2F021 /* FillInBlankView.swift */, O2F022 /* FlashcardView.swift */, O2F023 /* ListeningModeView.swift */, O2F024 /* BadgesView.swift */, O2F025 /* CertificateView.swift */, O2F026 /* LeaderboardView.swift */, O2F027 /* AvatarCustomizeView.swift */); path = Views; sourceTree = "<group>"; };
+		O3G007 /* Products */ = {isa = PBXGroup; children = (O0APP /* OneBeeSpellingPractice.app */); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		O0T001 /* OneBeeSpellingPractice */ = {isa = PBXNativeTarget; buildConfigurationList = O0C003; buildPhases = (O1E001 /* Sources */, O1F001 /* Frameworks */, O1E002 /* Resources */); buildRules = (); dependencies = (); name = OneBeeSpellingPractice; productName = OneBeeSpellingPractice; productReference = O0APP; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		O0B001 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1500; LastUpgradeCheck = 1500; }; buildConfigurationList = O0C001; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = O3G001; productRefGroup = O3G007; projectDirPath = ""; projectRoot = ""; targets = (O0T001 /* OneBeeSpellingPractice */); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		O1E002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (O1B00B /* Assets.xcassets in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		O1E001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (O1B029 /* AppLayout.swift in Sources */, O1B001 /* OneBeeSpellingPracticeApp.swift in Sources */, O1B002 /* ContentView.swift in Sources */, O1B003 /* SpellingWord.swift in Sources */, O1B004 /* OneBeeWords.swift in Sources */, O1B005 /* ProgressStore.swift in Sources */, O1B006 /* SpeechService.swift in Sources */, O1B007 /* WordListView.swift in Sources */, O1B008 /* WordDetailView.swift in Sources */, O1B009 /* PracticeView.swift in Sources */, O1B00A /* ProgressView.swift in Sources */, O1B00C /* ThemePalette.swift in Sources */, O1B00D /* SettingsStore.swift in Sources */, O1B00E /* EncouragingMessages.swift in Sources */, O1B00F /* CelebrationOverlayView.swift in Sources */, O1B010 /* HomeView.swift in Sources */, O1B011 /* MultipleChoiceView.swift in Sources */, O1B012 /* ParentDashboardView.swift in Sources */, O1B013 /* SettingsView.swift in Sources */, O1B014 /* OnboardingView.swift in Sources */, O1B015 /* Badge.swift in Sources */, O1B016 /* Avatar.swift in Sources */, O1B017 /* WordCategory.swift in Sources */, O1B018 /* SiblingProfile.swift in Sources */, O1B019 /* AchievementStore.swift in Sources */, O1B01A /* CustomWordStore.swift in Sources */, O1B01B /* WordRepository.swift in Sources */, O1B01C /* AvatarStore.swift in Sources */, O1B01D /* LeaderboardStore.swift in Sources */, O1B01E /* NeverCapitalizationModifier.swift in Sources */, O1B01F /* LetterByLetterView.swift in Sources */, O1B020 /* FillInBlankView.swift in Sources */, O1B021 /* FlashcardView.swift in Sources */, O1B022 /* ListeningModeView.swift in Sources */, O1B023 /* BadgesView.swift in Sources */, O1B024 /* CertificateView.swift in Sources */, O1B025 /* LeaderboardView.swift in Sources */, O1B026 /* AvatarCustomizeView.swift in Sources */, O1B027 /* SoundEffectService.swift in Sources */, O1B028 /* NotificationService.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		O0C004 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES; CLANG_ANALYZER_NONNULL = YES; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_STRICT_OBJC_MSGSEND = YES; ENABLE_TESTABILITY = YES; GCC_OPTIMIZATION_LEVEL = 0; IPHONEOS_DEPLOYMENT_TARGET = 14.0; MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE; MTL_FAST_MATH = YES; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		O0C005 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES; CLANG_ANALYZER_NONNULL = YES; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_OPTIMIZATION_LEVEL = s; IPHONEOS_DEPLOYMENT_TARGET = 14.0; MTL_ENABLE_DEBUG_INFO = NO; MTL_FAST_MATH = YES; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; VALIDATE_PRODUCT = YES; }; name = Release; };
+		O0C006 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = YTY564XJWX; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_ASSET_PATHS = ""; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = OneBeeSpellingPractice/Info.plist; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.onebeespelling.app; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		O0C007 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = YTY564XJWX; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_ASSET_PATHS = ""; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = OneBeeSpellingPractice/Info.plist; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.onebeespelling.app; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		O0C001 /* Build configuration list for PBXProject */ = {isa = XCConfigurationList; buildConfigurations = (O0C004, O0C005); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		O0C003 /* Build configuration list for PBXNativeTarget */ = {isa = XCConfigurationList; buildConfigurations = (O0C006, O0C007); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = O0B001 /* Project object */;
+}
