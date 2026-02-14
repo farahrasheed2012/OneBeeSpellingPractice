@@ -63,6 +63,7 @@ struct LetterByLetterView: View {
                         } else {
                             TextField("Type the full word", text: $userGuess)
                                 .font(.system(size: 24))
+                                .foregroundColor(theme.primaryText)
                                 .multilineTextAlignment(.center)
                                 .padding(16)
                                 .background(theme.cardBackground)

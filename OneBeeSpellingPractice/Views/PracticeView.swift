@@ -129,9 +129,10 @@ struct PracticeView: View {
             
             TextField("Type here...", text: $userInput)
                 .font(.system(size: 24, weight: .medium))
+                .foregroundColor(theme.primaryText)
                 .multilineTextAlignment(.center)
                 .padding(20)
-                .background(Color(.systemGray6))
+                .background(Color(UIColor.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .autocorrectionDisabled()
                 .modifier(NeverCapitalizationModifier())

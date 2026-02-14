@@ -64,6 +64,7 @@ struct ListeningModeView: View {
                         
                         TextField("Spell the word...", text: $userInput)
                             .font(.system(size: 24))
+                            .foregroundColor(theme.primaryText)
                             .multilineTextAlignment(.center)
                             .padding(20)
                             .background(theme.cardBackground)

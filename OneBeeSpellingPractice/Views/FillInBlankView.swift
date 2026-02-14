@@ -58,6 +58,7 @@ struct FillInBlankView: View {
                             .buttonStyle(.plain)
                         TextField("Type the word", text: $userInput)
                             .font(.system(size: 24))
+                            .foregroundColor(theme.primaryText)
                             .multilineTextAlignment(.center)
                             .padding(16)
                             .background(theme.cardBackground)
