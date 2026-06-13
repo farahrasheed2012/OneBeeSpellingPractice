@@ -85,6 +85,11 @@ extension View {
         self
         #endif
     }
+
+    /// Keep SwiftUI semantic colors aligned with the in-app dark mode toggle.
+    func appPreferredColorScheme(_ settings: SettingsStore) -> some View {
+        preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+    }
 }
 
 extension ToolbarItemPlacement {

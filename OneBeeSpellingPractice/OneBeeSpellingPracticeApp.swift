@@ -13,6 +13,10 @@ struct OneBeeSpellingPracticeApp: App {
     @StateObject private var achievementStore = AchievementStore()
     @StateObject private var avatarStore = AvatarStore()
     @StateObject private var leaderboardStore = LeaderboardStore()
+
+    init() {
+        SpeechService.shared.prepare()
+    }
     
     var body: some Scene {
         WindowGroup {

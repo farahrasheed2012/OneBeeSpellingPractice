@@ -24,7 +24,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: AppLayout.cardSpacing) {
                     headerCard
@@ -34,11 +34,13 @@ struct HomeView: View {
                     moreSection
                 }
                 .padding(AppLayout.padding)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .background(Color.appGroupedBackground)
             .navigationTitle("One Bee Spelling")
             .largeNavigationBarTitle()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             achievementStore.checkAndUnlockBadges(progressStore: progressStore)
         }
@@ -88,7 +90,7 @@ struct HomeView: View {
                     Text("Today's word: \(word.word)")
                         .font(.body)
                         .foregroundColor(.secondary)
-                    NavigationLink(destination: WordDetailView(word: word, speech: SpeechService()).environmentObject(settings)) {
+                    NavigationLink(destination: WordDetailView(word: word).environmentObject(settings)) {
                         ZStack {
                             Color.accentColor
                             Text("Practice this word")
@@ -166,8 +168,11 @@ struct HomeView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
 
+            NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                rowLabel("Listen & Spell", systemImage: "ear")
+            }
             NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
-                rowLabel("Spelling Quiz", systemImage: "pencil.and.outline")
+                rowLabel("See & Spell", systemImage: "eye")
             }
             NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                 rowLabel("Multiple Choice", systemImage: "list.bullet")
@@ -236,8 +241,11 @@ struct PracticeModePickerView: View {
     var body: some View {
         List {
             Section(header: Text("Choose a practice mode")) {
+                NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
+                    Label("Listen & Spell", systemImage: "ear")
+                }
                 NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
-                    Label("Spelling Quiz", systemImage: "pencil.and.outline")
+                    Label("See & Spell", systemImage: "eye")
                 }
                 NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings).onDisappear { presentationMode.wrappedValue.dismiss() }) {
                     Label("Multiple Choice", systemImage: "list.bullet")

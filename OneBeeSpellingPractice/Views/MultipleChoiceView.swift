@@ -9,7 +9,7 @@ struct MultipleChoiceView: View {
     let words: [SpellingWord]
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
-    private let speech = SpeechService()
+    private var speech: SpeechService { SpeechService.shared }
     
     init(words: [SpellingWord] = OneBeeWords.all) {
         self.words = words
@@ -21,9 +21,12 @@ struct MultipleChoiceView: View {
     @State private var isCorrect = false
     @State private var showCelebration = false
     @State private var options: [String] = []
+    @State private var sessionScore = QuizSessionScore()
+    @State private var showSessionSummary = false
+    @Environment(\.dismiss) private var dismiss
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
-    private var currentWord: SpellingWord { words[currentIndex % max(words.count, 1)] }
+    private var currentWord: SpellingWord { words[min(currentIndex, max(words.count - 1, 0))] }
     
     var body: some View {
         Group {
@@ -63,7 +66,12 @@ struct MultipleChoiceView: View {
             theme.surface.ignoresSafeArea()
             
             VStack(spacing: 24) {
-                progressText
+                QuizScoreHeader(
+                    score: sessionScore,
+                    wordIndex: currentIndex,
+                    wordCount: words.count,
+                    theme: theme
+                )
                 
                 if showResult {
                     resultCard
@@ -78,6 +86,8 @@ struct MultipleChoiceView: View {
                 }
             }
             .padding(24)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
             
             if showCelebration {
                 CelebrationOverlayView(
@@ -87,12 +97,24 @@ struct MultipleChoiceView: View {
                 )
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showSessionSummary) {
+            QuizSessionSummarySheet(
+                score: sessionScore,
+                theme: theme,
+                onPracticeAgain: restartSession,
+                onDone: { showSessionSummary = false; dismiss() }
+            )
+        }
     }
     
-    private var progressText: some View {
-        Text("Word \(currentIndex + 1) of \(words.count)")
-            .font(.system(size: ThemePalette.captionSize))
-            .foregroundColor(theme.secondaryText)
+    private func restartSession() {
+        sessionScore.reset()
+        currentIndex = 0
+        selectedOption = nil
+        showResult = false
+        showSessionSummary = false
+        generateOptions()
     }
     
     private var definitionCard: some View {
@@ -105,7 +127,7 @@ struct MultipleChoiceView: View {
                 .foregroundColor(theme.primaryText)
                 .multilineTextAlignment(.center)
             Button {
-                speech.speak(currentWord.word)
+                speech.speak(currentWord.word, settings: settings)
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "speaker.wave.2.fill")
@@ -121,6 +143,11 @@ struct MultipleChoiceView: View {
         .background(theme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
         .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 4)
+        .id(currentWord.id)
+        .onAppear {
+            guard !showResult else { return }
+            speech.speak(currentWord.word, settings: settings)
+        }
     }
     
     private var optionsGrid: some View {
@@ -138,6 +165,7 @@ struct MultipleChoiceView: View {
             selectedOption = option
             let correct = option.lowercased() == currentWord.word.lowercased()
             isCorrect = correct
+            sessionScore.recordAnswer(correct: correct, word: currentWord)
             if correct {
                 progressStore.markCompleted(wordId: currentWord.id)
                 if settings.hapticEnabled {
@@ -191,10 +219,14 @@ struct MultipleChoiceView: View {
     
     private var nextButton: some View {
         Button {
+            if currentIndex >= words.count - 1 {
+                showSessionSummary = true
+                return
+            }
             withAnimation {
                 showResult = false
                 selectedOption = nil
-                currentIndex = (currentIndex + 1) % words.count
+                currentIndex += 1
                 generateOptions()
             }
         } label: {
@@ -220,7 +252,7 @@ struct MultipleChoiceView: View {
 #if DEBUG
 struct MultipleChoiceView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             MultipleChoiceView(words: OneBeeWords.all)
                 .environmentObject(ProgressStore())
                 .environmentObject(SettingsStore())

@@ -10,16 +10,19 @@ struct FillInBlankView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
     let words: [SpellingWord]
-    private let speech = SpeechService()
+    private var speech: SpeechService { SpeechService.shared }
     
     @State private var currentIndex = 0
     @State private var userInput = ""
     @State private var showResult = false
     @State private var isCorrect = false
     @State private var showCelebration = false
+    @State private var sessionScore = QuizSessionScore()
+    @State private var showSessionSummary = false
+    @Environment(\.dismiss) private var dismiss
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
-    private var currentWord: SpellingWord { words[currentIndex % words.count] }
+    private var currentWord: SpellingWord { words[min(currentIndex, max(words.count - 1, 0))] }
     /// Sentence with blank: use exampleSentence if it contains the word, else "The word is ___."
     private var sentenceWithBlank: String {
         if let sent = currentWord.exampleSentence, sent.lowercased().contains(currentWord.word.lowercased()) {
@@ -32,6 +35,13 @@ struct FillInBlankView: View {
         ZStack {
             theme.surface.ignoresSafeArea()
             VStack(spacing: 28) {
+                QuizScoreHeader(
+                    score: sessionScore,
+                    wordIndex: currentIndex,
+                    wordCount: words.count,
+                    theme: theme
+                )
+                
                 if showResult {
                     resultCard
                     Button("Next") { nextWord() }
@@ -52,7 +62,7 @@ struct FillInBlankView: View {
                             .foregroundColor(theme.primaryText)
                             .multilineTextAlignment(.center)
                             .padding()
-                        Button("Hear the word") { speech.speak(currentWord.word) }
+                        Button("Hear the word") { speech.speak(currentWord.word, settings: settings) }
                             .font(.system(size: ThemePalette.bodySize))
                             .foregroundColor(theme.accent)
                             .buttonStyle(.plain)
@@ -68,6 +78,7 @@ struct FillInBlankView: View {
                         Button("Check") {
                             let correct = userInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == currentWord.word.lowercased()
                             isCorrect = correct
+                            sessionScore.recordAnswer(correct: correct, word: currentWord)
                             progressStore.markPracticed(wordId: currentWord.id)
                             if correct {
                                 progressStore.markCompleted(wordId: currentWord.id)
@@ -92,6 +103,11 @@ struct FillInBlankView: View {
                     .background(theme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
                     .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 4)
+                    .id(currentWord.id)
+                    .onAppear {
+                        guard !showResult else { return }
+                        speech.speak(currentWord.word, settings: settings)
+                    }
                 }
                 Spacer()
             }
@@ -102,6 +118,22 @@ struct FillInBlankView: View {
         }
         .navigationTitle("✏️ Fill in the Blank")
         .inlineNavigationBarTitle()
+        .sheet(isPresented: $showSessionSummary) {
+            QuizSessionSummarySheet(
+                score: sessionScore,
+                theme: theme,
+                onPracticeAgain: restartSession,
+                onDone: { showSessionSummary = false; dismiss() }
+            )
+        }
+    }
+    
+    private func restartSession() {
+        sessionScore.reset()
+        currentIndex = 0
+        userInput = ""
+        showResult = false
+        showSessionSummary = false
     }
     
     private var resultCard: some View {
@@ -122,7 +154,11 @@ struct FillInBlankView: View {
     }
     
     private func nextWord() {
-        currentIndex = (currentIndex + 1) % words.count
+        if currentIndex >= words.count - 1 {
+            showSessionSummary = true
+            return
+        }
+        currentIndex += 1
         userInput = ""
         showResult = false
     }

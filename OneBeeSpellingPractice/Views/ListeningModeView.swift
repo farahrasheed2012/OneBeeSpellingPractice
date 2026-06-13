@@ -10,24 +10,29 @@ struct ListeningModeView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
     let words: [SpellingWord]
-    private let speech = SpeechService()
+    private var speech: SpeechService { SpeechService.shared }
     
     @State private var currentIndex = 0
     @State private var userInput = ""
     @State private var showResult = false
     @State private var isCorrect = false
     @State private var showCelebration = false
-    
+    @State private var sessionScore = QuizSessionScore()
+    @State private var showSessionSummary = false
+    @Environment(\.dismiss) private var dismiss
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
-    private var currentWord: SpellingWord { words[currentIndex % words.count] }
+    private var currentWord: SpellingWord { words[min(currentIndex, max(words.count - 1, 0))] }
     
     var body: some View {
         ZStack {
             theme.surface.ignoresSafeArea()
             VStack(spacing: 28) {
-                Text("Listen and spell")
-                    .font(.system(size: ThemePalette.captionSize))
-                    .foregroundColor(theme.secondaryText)
+                QuizScoreHeader(
+                    score: sessionScore,
+                    wordIndex: currentIndex,
+                    wordCount: words.count,
+                    theme: theme
+                )
                 
                 if showResult {
                     resultCard
@@ -46,7 +51,7 @@ struct ListeningModeView: View {
                             .foregroundColor(theme.primaryText)
                             .multilineTextAlignment(.center)
                         Button {
-                            speech.speak(currentWord.word)
+                            speech.speak(currentWord.word, settings: settings)
                         } label: {
                             HStack(spacing: 10) {
                                 Image(systemName: "speaker.wave.2.fill")
@@ -75,6 +80,7 @@ struct ListeningModeView: View {
                         Button("Check spelling") {
                             let correct = userInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == currentWord.word.lowercased()
                             isCorrect = correct
+                            sessionScore.recordAnswer(correct: correct, word: currentWord)
                             progressStore.markPracticed(wordId: currentWord.id)
                             if correct {
                                 progressStore.markCompleted(wordId: currentWord.id)
@@ -99,16 +105,40 @@ struct ListeningModeView: View {
                     .background(theme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
                     .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 4)
+                    .id(currentWord.id)
+                    .onAppear {
+                        guard !showResult else { return }
+                        speech.speak(currentWord.word, settings: settings)
+                    }
                 }
                 Spacer()
             }
             .padding(24)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
             if showCelebration {
                 CelebrationOverlayView(message: EncouragingMessages.randomCorrect(), accentColor: theme.success, isVisible: $showCelebration)
             }
         }
-        .navigationTitle("👂 Listening Mode")
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle("👂 Listen & Spell")
         .inlineNavigationBarTitle()
+        .sheet(isPresented: $showSessionSummary) {
+            QuizSessionSummarySheet(
+                score: sessionScore,
+                theme: theme,
+                onPracticeAgain: restartSession,
+                onDone: { showSessionSummary = false; dismiss() }
+            )
+        }
+    }
+    
+    private func restartSession() {
+        sessionScore.reset()
+        currentIndex = 0
+        userInput = ""
+        showResult = false
+        showSessionSummary = false
     }
     
     private var resultCard: some View {
@@ -129,7 +159,11 @@ struct ListeningModeView: View {
     }
     
     private func nextWord() {
-        currentIndex = (currentIndex + 1) % words.count
+        if currentIndex >= words.count - 1 {
+            showSessionSummary = true
+            return
+        }
+        currentIndex += 1
         userInput = ""
         showResult = false
     }

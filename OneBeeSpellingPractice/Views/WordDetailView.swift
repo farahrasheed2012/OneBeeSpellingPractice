@@ -7,7 +7,7 @@ import SwiftUI
 
 struct WordDetailView: View {
     let word: SpellingWord
-    let speech: SpeechService
+    var speech: SpeechService = .shared
     @EnvironmentObject var settings: SettingsStore
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
@@ -82,14 +82,17 @@ struct WordDetailView: View {
             }
         }
         .inlineNavigationBarTitle()
+        .onAppear {
+            speech.speak(word.word, settings: settings)
+        }
     }
 }
 
 #Preview {
-    NavigationView {
-        WordDetailView(
+        NavigationStack {
+            WordDetailView(
             word: SpellingWord(word: "cozy", definition: "Warm, comfortable, and snug", exampleSentence: "The blanket is cozy.", phonetic: "ko-zee"),
-            speech: SpeechService()
+            speech: SpeechService.shared
         )
         .environmentObject(SettingsStore())
     }

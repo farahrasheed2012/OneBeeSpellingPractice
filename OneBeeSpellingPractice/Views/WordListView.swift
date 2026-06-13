@@ -9,33 +9,28 @@ struct WordListView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
     @EnvironmentObject var wordRepository: WordRepository
-    private let speech = SpeechService()
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     private var words: [SpellingWord] { wordRepository.allWords }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                theme.surface
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(words) { word in
-                            NavigationLink(destination: WordDetailView(word: word, speech: speech)) {
-                                WordRowView(word: word)
-                            }
-                            .buttonStyle(.plain)
-                        }
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(words) { word in
+                    NavigationLink(destination: WordDetailView(word: word).environmentObject(settings)) {
+                        WordRowView(word: word)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .buttonStyle(.plain)
                 }
             }
-            .navigationTitle("🐝 One Bee Words")
-            .largeNavigationBarTitle()
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
         }
+        .background(theme.surface)
+        .navigationTitle("🐝 One Bee Words")
+        .largeNavigationBarTitle()
     }
 }
 

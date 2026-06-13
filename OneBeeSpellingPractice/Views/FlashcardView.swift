@@ -10,7 +10,7 @@ struct FlashcardView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
     let words: [SpellingWord]
-    private let speech = SpeechService()
+    private var speech: SpeechService { SpeechService.shared }
     
     @State private var currentIndex = 0
     @State private var isFlipped = false
@@ -44,7 +44,7 @@ struct FlashcardView: View {
                 }
                 
                 HStack(spacing: 20) {
-                    Button("Hear word") { speech.speak(currentWord.word) }
+                    Button("Hear word") { speech.speak(currentWord.word, settings: settings) }
                         .font(.system(size: ThemePalette.bodySize, weight: .medium))
                         .foregroundColor(theme.accent)
                         .buttonStyle(.plain)
@@ -99,5 +99,8 @@ struct FlashcardView: View {
                 .foregroundColor(theme.secondaryText)
         }
         .padding(24)
+        .onAppear {
+            speech.speak(currentWord.word, settings: settings)
+        }
     }
 }

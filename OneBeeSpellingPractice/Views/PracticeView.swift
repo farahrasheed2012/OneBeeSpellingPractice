@@ -20,7 +20,10 @@ struct PracticeView: View {
     @State private var isCorrect = false
     @State private var showCelebration = false
     @State private var sessionStartTime: Date?
-    private let speech = SpeechService()
+    @State private var sessionScore = QuizSessionScore()
+    @State private var showSessionSummary = false
+    @Environment(\.dismiss) private var dismiss
+    private var speech: SpeechService { SpeechService.shared }
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     private var currentWord: SpellingWord {
@@ -36,75 +39,88 @@ struct PracticeView: View {
     }
     
     private var emptyWordsView: some View {
-        NavigationView {
-            VStack(spacing: 16) {
-                Text("No words for this difficulty")
-                    .font(.title2)
-                    .foregroundColor(theme.primaryText)
-                Text("Change the difficulty level in Settings, or try \"All\".")
-                    .font(.body)
-                    .foregroundColor(theme.secondaryText)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(24)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(theme.surface)
-            .navigationTitle("Practice")
+        VStack(spacing: 16) {
+            Text("No words for this difficulty")
+                .font(.title2)
+                .foregroundColor(theme.primaryText)
+            Text("Change the difficulty level in Settings, or try \"All\".")
+                .font(.body)
+                .foregroundColor(theme.secondaryText)
+                .multilineTextAlignment(.center)
         }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.surface)
+        .navigationTitle("See & Spell")
     }
     
     private var mainContent: some View {
-        NavigationView {
-            ZStack {
-                theme.surface
-                    .ignoresSafeArea()
+        ZStack {
+            theme.surface
+                .ignoresSafeArea()
+            
+            VStack(spacing: 32) {
+                QuizScoreHeader(
+                    score: sessionScore,
+                    wordIndex: currentIndex,
+                    wordCount: words.count,
+                    theme: theme
+                )
                 
-                VStack(spacing: 32) {
-                    progressIndicator
-                    
-                    if showResult {
-                        resultCard
-                    } else {
-                        wordCard
-                        if !isWordVisible {
-                            inputSection
-                        }
+                if showResult {
+                    resultCard
+                } else {
+                    wordCard
+                    if !isWordVisible {
+                        inputSection
                     }
-                    
-                    Spacer()
-                    bottomButtons
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
                 
-                if showCelebration {
-                    CelebrationOverlayView(
-                        message: EncouragingMessages.randomCorrect(),
-                        accentColor: theme.success,
-                        isVisible: $showCelebration
-                    )
-                }
+                Spacer()
+                bottomButtons
             }
-            .navigationTitle("✏️ Practice")
-            .largeNavigationBarTitle()
-            .onAppear {
-                if sessionStartTime == nil { sessionStartTime = Date() }
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
+            
+            if showCelebration {
+                CelebrationOverlayView(
+                    message: EncouragingMessages.randomCorrect(),
+                    accentColor: theme.success,
+                    isVisible: $showCelebration
+                )
             }
-            .onDisappear {
-                if let start = sessionStartTime {
-                    let minutes = max(0, Int(Date().timeIntervalSince(start) / 60))
-                    if minutes > 0 { progressStore.recordSession(minutes: minutes) }
-                }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle("👁 See & Spell")
+        .largeNavigationBarTitle()
+        .onAppear {
+            if sessionStartTime == nil { sessionStartTime = Date() }
+        }
+        .onDisappear {
+            if let start = sessionStartTime {
+                let minutes = max(0, Int(Date().timeIntervalSince(start) / 60))
+                if minutes > 0 { progressStore.recordSession(minutes: minutes) }
             }
+        }
+        .sheet(isPresented: $showSessionSummary) {
+            QuizSessionSummarySheet(
+                score: sessionScore,
+                theme: theme,
+                onPracticeAgain: restartSession,
+                onDone: { showSessionSummary = false; dismiss() }
+            )
         }
     }
     
-    private var progressIndicator: some View {
-        HStack(spacing: 6) {
-            Text("Word \(currentIndex + 1) of \(words.count)")
-                .font(.system(size: ThemePalette.captionSize))
-                .foregroundColor(theme.secondaryText)
-        }
+    private func restartSession() {
+        sessionScore.reset()
+        currentIndex = 0
+        isWordVisible = true
+        userInput = ""
+        showResult = false
+        showSessionSummary = false
     }
     
     private var wordCard: some View {
@@ -114,9 +130,11 @@ struct PracticeView: View {
                     .font(.system(size: 44, weight: .bold))
                     .foregroundColor(theme.primaryText)
                     .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 
                 Button {
-                    speech.speak(currentWord.word)
+                    speech.speak(currentWord.word, settings: settings)
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "speaker.wave.2.fill")
@@ -136,8 +154,12 @@ struct PracticeView: View {
                     Text("Hide word & spell it!")
                         .font(.system(size: ThemePalette.bodySize, weight: .semibold))
                         .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 18)
+                        .frame(maxWidth: .infinity)
                         .background(theme.accent)
                         .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
                 }
@@ -149,6 +171,11 @@ struct PracticeView: View {
         .background(theme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
         .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 4)
+        .id("word-\(currentWord.id)-visible-\(isWordVisible)")
+        .onAppear {
+            guard isWordVisible else { return }
+            speech.speak(currentWord.word, settings: settings)
+        }
     }
     
     private var inputSection: some View {
@@ -234,6 +261,7 @@ struct PracticeView: View {
         let trimmed = userInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let correct = currentWord.word.lowercased()
         isCorrect = trimmed == correct
+        sessionScore.recordAnswer(correct: isCorrect, word: currentWord)
         
         progressStore.markPracticed(wordId: currentWord.id)
         if isCorrect {
@@ -253,9 +281,13 @@ struct PracticeView: View {
     }
     
     private func nextWord() {
+        if currentIndex >= words.count - 1 {
+            showSessionSummary = true
+            return
+        }
         withAnimation {
             showResult = false
-            currentIndex = (currentIndex + 1) % words.count
+            currentIndex += 1
             isWordVisible = true
             userInput = ""
         }

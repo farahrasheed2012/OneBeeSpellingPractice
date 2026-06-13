@@ -49,6 +49,7 @@ struct ContentView: View {
                 #endif
             }
         }
+        .appPreferredColorScheme(settings)
     }
 
     #if os(iOS)
@@ -138,8 +139,11 @@ struct PracticeTabView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
+                        Label("Listen & Spell", systemImage: "ear")
+                    }
                     NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
-                        Label("Spelling Quiz", systemImage: "pencil.and.outline")
+                        Label("See & Spell", systemImage: "eye")
                     }
                     NavigationLink(destination: MultipleChoiceView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Multiple Choice", systemImage: "list.bullet")
@@ -152,9 +156,6 @@ struct PracticeTabView: View {
                     }
                     NavigationLink(destination: FlashcardView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
                         Label("Flashcards", systemImage: "rectangle.stack")
-                    }
-                    NavigationLink(destination: ListeningModeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
-                        Label("Listening Mode", systemImage: "ear")
                     }
                 } header: {
                     Text("Practice Modes")

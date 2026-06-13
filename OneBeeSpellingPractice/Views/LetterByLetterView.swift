@@ -18,9 +18,12 @@ struct LetterByLetterView: View {
     @State private var showResult = false
     @State private var isCorrect = false
     @State private var showCelebration = false
+    @State private var sessionScore = QuizSessionScore()
+    @State private var showSessionSummary = false
+    @Environment(\.dismiss) private var dismiss
     
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
-    private var currentWord: SpellingWord { words[currentIndex % words.count] }
+    private var currentWord: SpellingWord { words[min(currentIndex, max(words.count - 1, 0))] }
     private var wordLetters: [Character] { Array(currentWord.word.lowercased()) }
     private var revealedPart: String {
         guard revealedCount > 0, revealedCount <= wordLetters.count else { return "" }
@@ -31,9 +34,12 @@ struct LetterByLetterView: View {
         ZStack {
             theme.surface.ignoresSafeArea()
             VStack(spacing: 28) {
-                Text("Letter by letter")
-                    .font(.system(size: ThemePalette.captionSize))
-                    .foregroundColor(theme.secondaryText)
+                QuizScoreHeader(
+                    score: sessionScore,
+                    wordIndex: currentIndex,
+                    wordCount: words.count,
+                    theme: theme
+                )
                 
                 if showResult {
                     resultCard
@@ -112,6 +118,23 @@ struct LetterByLetterView: View {
         }
         .navigationTitle("Letter by Letter")
         .inlineNavigationBarTitle()
+        .sheet(isPresented: $showSessionSummary) {
+            QuizSessionSummarySheet(
+                score: sessionScore,
+                theme: theme,
+                onPracticeAgain: restartSession,
+                onDone: { showSessionSummary = false; dismiss() }
+            )
+        }
+    }
+    
+    private func restartSession() {
+        sessionScore.reset()
+        currentIndex = 0
+        revealedCount = 0
+        userGuess = ""
+        showResult = false
+        showSessionSummary = false
     }
     
     private var resultCard: some View {
@@ -133,6 +156,7 @@ struct LetterByLetterView: View {
     
     private func checkAnswer() {
         isCorrect = userGuess.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == currentWord.word.lowercased()
+        sessionScore.recordAnswer(correct: isCorrect, word: currentWord)
         progressStore.markPracticed(wordId: currentWord.id)
         if isCorrect {
             progressStore.markCompleted(wordId: currentWord.id)
@@ -146,7 +170,11 @@ struct LetterByLetterView: View {
     }
     
     private func nextWord() {
-        currentIndex = (currentIndex + 1) % words.count
+        if currentIndex >= words.count - 1 {
+            showSessionSummary = true
+            return
+        }
+        currentIndex += 1
         revealedCount = 0
         userGuess = ""
         showResult = false

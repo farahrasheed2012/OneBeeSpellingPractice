@@ -13,7 +13,7 @@ struct SpellingProgressView: View {
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 theme.surface
                     .ignoresSafeArea()
@@ -25,8 +25,11 @@ struct SpellingProgressView: View {
                         encouragingMessage
                     }
                     .padding(24)
+                    .frame(maxWidth: 720)
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("⭐ My Progress")
             .largeNavigationBarTitle()
         }

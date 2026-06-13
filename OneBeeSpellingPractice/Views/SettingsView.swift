@@ -14,124 +14,142 @@ struct SettingsView: View {
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
+            #if os(macOS)
+            settingsForm
+            #else
             ZStack {
                 theme.surface.ignoresSafeArea()
-                Form {
-                    Section(header: Text("Appearance")) {
-                        Picker("Theme", selection: $settings.themeId) {
-                            Text("Warm").tag("warm")
-                            Text("Ocean").tag("ocean")
-                            Text("Space").tag("space")
-                            Text("Jungle").tag("jungle")
-                            Text("Pastel").tag("pastel")
-                        }
-                        Toggle("Dark mode", isOn: $settings.darkModeEnabled)
-                        Toggle("High contrast", isOn: $settings.highContrastEnabled)
-                        Toggle("Dyslexia-friendly font", isOn: $settings.dyslexiaFontEnabled)
+                settingsForm
+            }
+            #endif
+        }
+    }
+
+    private var settingsForm: some View {
+        Form {
+            Section(header: Text("Appearance")) {
+                Picker("Theme", selection: $settings.themeId) {
+                    Text("Warm").tag("warm")
+                    Text("Ocean").tag("ocean")
+                    Text("Space").tag("space")
+                    Text("Jungle").tag("jungle")
+                    Text("Pastel").tag("pastel")
+                }
+                Toggle("Dark mode", isOn: $settings.darkModeEnabled)
+                Toggle("High contrast", isOn: $settings.highContrastEnabled)
+                Toggle("Dyslexia-friendly font", isOn: $settings.dyslexiaFontEnabled)
+            }
+            Section(header: Text("Practice")) {
+                Picker("Difficulty level", selection: $settings.difficultyFilter) {
+                    ForEach(DifficultyFilter.allCases) { filter in
+                        Text(filter.displayName).tag(filter)
                     }
-                    Section(header: Text("Practice")) {
-                        Picker("Difficulty level", selection: $settings.difficultyFilter) {
-                            ForEach(DifficultyFilter.allCases) { filter in
-                                Text(filter.displayName).tag(filter)
-                            }
-                        }
-                        .onChange(of: settings.difficultyFilter) { _ in settings.save() }
-                        Stepper("Words per session: \(settings.wordsPerSession)", value: $settings.wordsPerSession, in: 5...50, step: 5)
-                            .onChange(of: settings.wordsPerSession) { _ in settings.persistWordsPerSession() }
-                        Toggle("Daily reminder", isOn: $settings.reminderEnabled)
-                            .onChange(of: settings.reminderEnabled) { _ in
-                                if settings.reminderEnabled {
-                                    NotificationService.shared.requestAuthorization { _ in }
-                                    NotificationService.shared.scheduleDailyReminder(hour: settings.reminderHour, minute: settings.reminderMinute)
-                                } else {
-                                    NotificationService.shared.cancelReminder()
-                                }
-                            }
+                }
+                .onChange(of: settings.difficultyFilter) { _ in settings.save() }
+                Stepper("Words per session: \(settings.wordsPerSession)", value: $settings.wordsPerSession, in: 5...50, step: 5)
+                    .onChange(of: settings.wordsPerSession) { _ in settings.persistWordsPerSession() }
+                Toggle("Daily reminder", isOn: $settings.reminderEnabled)
+                    .onChange(of: settings.reminderEnabled) { _ in
                         if settings.reminderEnabled {
-                            Picker("Reminder time", selection: Binding(
-                                get: { settings.reminderHour * 60 + settings.reminderMinute },
-                                set: { settings.updateReminder(hour: $0 / 60, minute: $0 % 60); NotificationService.shared.scheduleDailyReminder(hour: settings.reminderHour, minute: settings.reminderMinute) }
-                            )) {
-                                ForEach(Array(stride(from: 0, to: 24 * 60, by: 30)), id: \.self) { total in
-                                    Text(timeString(total)).tag(total)
-                                }
-                            }
-                        }
-                    }
-                    Section(header: Text("Text-to-Speech")) {
-                        Picker("Voice", selection: $settings.speechVoiceStyle) {
-                            Text("Female").tag("female")
-                            Text("Male").tag("male")
-                        }
-                        Picker("Speed", selection: $settings.speechRateStyle) {
-                            Text("Slow").tag("slow")
-                            Text("Normal").tag("normal")
-                            Text("Fast").tag("fast")
-                        }
-                    }
-                    Section(header: Text("Feedback")) {
-                        Toggle("Haptic feedback", isOn: $settings.hapticEnabled)
-                        Toggle("Background music", isOn: $settings.musicEnabled)
-                    }
-                    Section(header: Text("Parent")) {
-                        if settings.hasPIN() {
-                            Button("Change PIN") { showParentPINSetup = true }
+                            NotificationService.shared.requestAuthorization { _ in }
+                            NotificationService.shared.scheduleDailyReminder(hour: settings.reminderHour, minute: settings.reminderMinute)
                         } else {
-                            Button("Set up PIN") { showParentPINSetup = true }
+                            NotificationService.shared.cancelReminder()
                         }
-                        NavigationLink(destination: ParentDashboardView()) {
-                            Text("Parent Dashboard")
+                    }
+                if settings.reminderEnabled {
+                    Picker("Reminder time", selection: Binding(
+                        get: { settings.reminderHour * 60 + settings.reminderMinute },
+                        set: { settings.updateReminder(hour: $0 / 60, minute: $0 % 60); NotificationService.shared.scheduleDailyReminder(hour: settings.reminderHour, minute: settings.reminderMinute) }
+                    )) {
+                        ForEach(Array(stride(from: 0, to: 24 * 60, by: 30)), id: \.self) { total in
+                            Text(timeString(total)).tag(total)
                         }
                     }
                 }
             }
-            .navigationTitle("⚙️ Settings")
-            .largeNavigationBarTitle()
-            .sheet(isPresented: $showParentPINSetup) {
-                pinSetupSheet
+            Section(header: Text("Text-to-Speech")) {
+                Picker("Voice", selection: $settings.speechVoiceStyle) {
+                    Text("Female").tag("female")
+                    Text("Male").tag("male")
+                }
+                Picker("Speed", selection: $settings.speechRateStyle) {
+                    Text("Slow").tag("slow")
+                    Text("Normal").tag("normal")
+                    Text("Fast").tag("fast")
+                }
             }
+            Section(header: Text("Feedback")) {
+                Toggle("Haptic feedback", isOn: $settings.hapticEnabled)
+                Toggle("Background music", isOn: $settings.musicEnabled)
+            }
+            Section(header: Text("Parent")) {
+                if settings.hasPIN() {
+                    Button("Change PIN") { showParentPINSetup = true }
+                } else {
+                    Button("Set up PIN") { showParentPINSetup = true }
+                }
+                NavigationLink(destination: ParentDashboardView()) {
+                    Text("Parent Dashboard")
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("⚙️ Settings")
+        .largeNavigationBarTitle()
+        .tint(theme.accent)
+        .sheet(isPresented: $showParentPINSetup) {
+            pinSetupSheet
         }
     }
     
     private var pinSetupSheet: some View {
-        NavigationView {
+        NavigationStack {
+            #if os(macOS)
+            pinSetupContent
+            #else
             ZStack {
                 theme.surface.ignoresSafeArea()
-                VStack(spacing: 20) {
-                    SecureField("Enter 4-digit PIN", text: $newPIN)
-                        .textFieldStyle(.roundedBorder)
-                        .platformNumberPadKeyboard()
-                        .frame(maxWidth: 280)
-                    SecureField("Confirm PIN", text: $confirmPIN)
-                        .textFieldStyle(.roundedBorder)
-                        .platformNumberPadKeyboard()
-                        .frame(maxWidth: 280)
-                    Spacer()
-                }
-                .padding(24)
+                pinSetupContent
             }
-            .navigationTitle("Parent PIN")
-            .inlineNavigationBarTitle()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+            #endif
+        }
+    }
+
+    private var pinSetupContent: some View {
+        VStack(spacing: 20) {
+            SecureField("Enter 4-digit PIN", text: $newPIN)
+                .textFieldStyle(.roundedBorder)
+                .platformNumberPadKeyboard()
+                .frame(maxWidth: 280)
+            SecureField("Confirm PIN", text: $confirmPIN)
+                .textFieldStyle(.roundedBorder)
+                .platformNumberPadKeyboard()
+                .frame(maxWidth: 280)
+            Spacer()
+        }
+        .padding(24)
+        .navigationTitle("Parent PIN")
+        .inlineNavigationBarTitle()
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") {
+                    showParentPINSetup = false
+                    newPIN = ""
+                    confirmPIN = ""
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    if newPIN.count >= 4 && newPIN == confirmPIN {
+                        settings.setParentPIN(newPIN)
                         showParentPINSetup = false
                         newPIN = ""
                         confirmPIN = ""
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        if newPIN.count >= 4 && newPIN == confirmPIN {
-                            settings.setParentPIN(newPIN)
-                            showParentPINSetup = false
-                            newPIN = ""
-                            confirmPIN = ""
-                        }
-                    }
-                    .disabled(newPIN.count < 4 || newPIN != confirmPIN)
-                }
+                .disabled(newPIN.count < 4 || newPIN != confirmPIN)
             }
         }
     }

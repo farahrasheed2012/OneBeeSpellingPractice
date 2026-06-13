@@ -264,7 +264,7 @@ struct AddCustomWordSheet: View {
     @State private var definition = ""
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 TextField("Word", text: $word)
                 TextField("Definition", text: $definition)
@@ -295,7 +295,7 @@ struct AddCustomWordSheet: View {
 #if DEBUG
 struct ParentDashboardView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ParentDashboardView()
                 .environmentObject(ProgressStore())
                 .environmentObject(SettingsStore())

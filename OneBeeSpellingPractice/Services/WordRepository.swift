@@ -58,13 +58,42 @@ final class WordRepository: ObservableObject {
         progressStore.wordsNeedingWork(from: pool)
     }
     
-    /// Limit words per session; filtered by difficulty (Easy / Medium / Hard / All).
+    /// Builds a varied session: includes words that need work, then fills to the limit with other words.
     func sessionWords(limit: Int, progressStore: ProgressStore, preferNeedingWork: Bool, difficultyFilter: DifficultyFilter) -> [SpellingWord] {
         let pool = words(forFilter: difficultyFilter)
-        let sortedPool = wordsByDifficultyAscending(from: pool)
-        let needWork = preferNeedingWork ? wordsNeedingWork(progressStore: progressStore, from: pool) : []
-        let needWorkLimited = preferNeedingWork && !needWork.isEmpty ? Array(needWork.prefix(limit)) : []
-        if !needWorkLimited.isEmpty { return needWorkLimited }
-        return Array(sortedPool.prefix(limit))
+        guard !pool.isEmpty else { return [] }
+
+        let effectiveLimit = min(max(limit, 1), pool.count)
+        var selected: [SpellingWord] = []
+        var usedIds = Set<String>()
+
+        func appendUnique(_ candidates: [SpellingWord]) {
+            for word in candidates {
+                guard selected.count < effectiveLimit, !usedIds.contains(word.id) else { continue }
+                selected.append(word)
+                usedIds.insert(word.id)
+            }
+        }
+
+        if preferNeedingWork {
+            let needWork = wordsNeedingWork(progressStore: progressStore, from: pool)
+            // Prioritize trouble words, but never let them take over the whole session.
+            let needWorkCap = min(needWork.count, max(1, effectiveLimit / 2))
+            appendUnique(Array(needWork.prefix(needWorkCap)))
+        }
+
+        let remaining = pool.filter { !usedIds.contains($0.id) }
+        let notCompleted = remaining.filter { !progressStore.isCompleted(wordId: $0.id) }.shuffled()
+        let completed = remaining.filter { progressStore.isCompleted(wordId: $0.id) }.shuffled()
+
+        appendUnique(notCompleted)
+        if selected.count < effectiveLimit {
+            appendUnique(completed)
+        }
+        if selected.count < effectiveLimit {
+            appendUnique(remaining.shuffled())
+        }
+
+        return selected.shuffled()
     }
 }
