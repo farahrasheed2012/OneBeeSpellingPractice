@@ -34,7 +34,7 @@ struct WordListView: View {
                 }
             }
             .navigationTitle("🐝 One Bee Words")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
         }
     }
 }

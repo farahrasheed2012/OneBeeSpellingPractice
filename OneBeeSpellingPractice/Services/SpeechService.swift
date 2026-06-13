@@ -35,7 +35,7 @@ final class SpeechService {
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
         
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, *) {
             let voices = AVSpeechSynthesisVoice.speechVoices().filter { $0.language.hasPrefix("en") }
             let preferredGender: AVSpeechSynthesisVoiceGender = voiceStyle == .female ? .female : .male
             let matching = voices.filter { $0.gender == preferredGender }

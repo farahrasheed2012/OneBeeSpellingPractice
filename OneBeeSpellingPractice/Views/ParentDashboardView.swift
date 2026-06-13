@@ -28,7 +28,7 @@ struct ParentDashboardView: View {
             }
         }
         .navigationTitle("👨‍👩‍👧 Parent Dashboard")
-        .navigationBarTitleDisplayMode(.large)
+        .largeNavigationBarTitle()
         .sheet(isPresented: $showExportSheet) {
             ShareSheet(activityItems: [exportText])
         }
@@ -45,7 +45,7 @@ struct ParentDashboardView: View {
                     .textFieldStyle(.roundedBorder)
                     .font(.system(size: 20))
                     .frame(maxWidth: 280)
-                    .keyboardType(.numberPad)
+                    .platformNumberPadKeyboard()
                 Button("Unlock") {
                     if settings.validatePIN(pinInput) {
                         isUnlocked = true
@@ -270,7 +270,7 @@ struct AddCustomWordSheet: View {
                 TextField("Definition", text: $definition)
             }
             .navigationTitle("Add custom word")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationBarTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { presentationMode.wrappedValue.dismiss() }
@@ -291,16 +291,6 @@ struct AddCustomWordSheet: View {
     }
 }
 
-/// Share sheet wrapper for exporting text
-struct ShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
 
 #if DEBUG
 struct ParentDashboardView_Previews: PreviewProvider {

@@ -17,11 +17,11 @@ enum AppLayout {
     static let minTouchTarget: CGFloat = 44
 }
 
-// MARK: - Semantic system colors (auto light/dark, iOS 14+)
+// MARK: - Semantic system colors (auto light/dark)
 extension Color {
-    static let appGroupedBackground = Color(UIColor.systemGroupedBackground)
-    static let appSecondaryGroupedBackground = Color(UIColor.secondarySystemGroupedBackground)
-    static let appTertiaryGroupedBackground = Color(UIColor.tertiarySystemGroupedBackground)
+    static let appGroupedBackground = PlatformColor.groupedBackground
+    static let appSecondaryGroupedBackground = PlatformColor.secondaryGroupedBackground
+    static let appTertiaryGroupedBackground = PlatformColor.tertiaryGroupedBackground
 }
 
 // MARK: - Card modifier

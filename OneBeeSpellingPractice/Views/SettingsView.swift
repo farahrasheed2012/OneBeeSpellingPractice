@@ -87,7 +87,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("⚙️ Settings")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
             .sheet(isPresented: $showParentPINSetup) {
                 pinSetupSheet
             }
@@ -101,18 +101,18 @@ struct SettingsView: View {
                 VStack(spacing: 20) {
                     SecureField("Enter 4-digit PIN", text: $newPIN)
                         .textFieldStyle(.roundedBorder)
-                        .keyboardType(.numberPad)
+                        .platformNumberPadKeyboard()
                         .frame(maxWidth: 280)
                     SecureField("Confirm PIN", text: $confirmPIN)
                         .textFieldStyle(.roundedBorder)
-                        .keyboardType(.numberPad)
+                        .platformNumberPadKeyboard()
                         .frame(maxWidth: 280)
                     Spacer()
                 }
                 .padding(24)
             }
             .navigationTitle("Parent PIN")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationBarTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

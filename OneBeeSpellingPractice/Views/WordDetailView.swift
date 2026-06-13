@@ -81,7 +81,7 @@ struct WordDetailView: View {
                 Spacer()
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
 }
 

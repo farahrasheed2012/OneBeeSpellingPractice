@@ -64,7 +64,7 @@ struct FlashcardView: View {
             .padding(.top, 24)
         }
         .navigationTitle("🃏 Flashcards")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
     
     private var frontOfCard: some View {

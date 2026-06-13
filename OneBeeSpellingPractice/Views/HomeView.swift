@@ -37,7 +37,7 @@ struct HomeView: View {
             }
             .background(Color.appGroupedBackground)
             .navigationTitle("One Bee Spelling")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
         }
         .onAppear {
             achievementStore.checkAndUnlockBadges(progressStore: progressStore)
@@ -61,7 +61,7 @@ struct HomeView: View {
             HStack(spacing: 4) {
                 Image(systemName: "star.fill")
                     .font(.body)
-                    .foregroundColor(Color(UIColor.systemYellow))
+                    .foregroundColor(PlatformColor.systemYellow)
                 Text("\(progressStore.totalStars)")
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -116,7 +116,7 @@ struct HomeView: View {
                 value: "\(progressStore.currentStreak)",
                 label: "Day Streak",
                 systemImage: "flame.fill",
-                tint: Color(UIColor.systemOrange)
+                tint: PlatformColor.systemOrange
             )
             Divider()
                 .frame(height: 40)
@@ -124,7 +124,7 @@ struct HomeView: View {
                 value: "\(progressStore.completedCount)/\(progressStore.totalWordCount)",
                 label: "Words Done",
                 systemImage: "checkmark.circle.fill",
-                tint: Color(UIColor.systemGreen)
+                tint: PlatformColor.systemGreen
             )
             Divider()
                 .frame(height: 40)
@@ -132,7 +132,7 @@ struct HomeView: View {
                 value: "\(progressStore.weeklyPracticeMinutes) min",
                 label: "This Week",
                 systemImage: "clock.fill",
-                tint: Color(UIColor.systemBlue)
+                tint: PlatformColor.systemBlue
             )
         }
         .padding(AppLayout.padding)
@@ -244,11 +244,11 @@ struct PracticeModePickerView: View {
                 }
             }
         }
-        .listStyle(InsetGroupedListStyle())
+        .platformListStyle()
         .navigationTitle("Practice")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .platformLeading) {
                 Button("Close") { presentationMode.wrappedValue.dismiss() }
             }
         }

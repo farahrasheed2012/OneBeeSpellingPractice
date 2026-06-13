@@ -34,7 +34,7 @@ struct MultipleChoiceView: View {
             }
         }
         .navigationTitle("📋 Multiple Choice")
-        .navigationBarTitleDisplayMode(.large)
+        .largeNavigationBarTitle()
         .onAppear {
             if !words.isEmpty {
                 generateOptions()
@@ -141,8 +141,7 @@ struct MultipleChoiceView: View {
             if correct {
                 progressStore.markCompleted(wordId: currentWord.id)
                 if settings.hapticEnabled {
-                    let gen = UIImpactFeedbackGenerator(style: .medium)
-                    gen.impactOccurred()
+                    HapticFeedback.impact(.medium)
                 }
                 withAnimation { showCelebration = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {

@@ -46,7 +46,7 @@ struct AvatarCustomizeView: View {
             }
         }
         .navigationTitle("Avatar")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
     
     private func colorFrom(name: String) -> Color {

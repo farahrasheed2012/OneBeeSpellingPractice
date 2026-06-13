@@ -6,18 +6,24 @@
 
 import SwiftUI
 import PDFKit
+#if canImport(UIKit)
+import UIKit
+#endif
+#if canImport(AppKit)
+import AppKit
+#endif
 
 struct CertificateView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
     @State private var showShare = false
     @State private var pdfData: Data?
-    
+
     private var theme: ThemePalette { AppTheme.palette(for: settings) }
     private var canEarnCertificate: Bool {
         progressStore.totalWordCount > 0 && progressStore.completedCount >= progressStore.totalWordCount
     }
-    
+
     var body: some View {
         ZStack {
             theme.surface.ignoresSafeArea()
@@ -62,9 +68,9 @@ struct CertificateView: View {
             }
         }
         .navigationTitle("Certificate")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
-    
+
     private var certificatePreview: some View {
         VStack(spacing: 12) {
             Text("Certificate of Achievement")
@@ -87,8 +93,17 @@ struct CertificateView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: ThemePalette.cornerRadius))
     }
-    
+
     private func generatePDF() -> Data? {
+        #if os(iOS)
+        return generatePDFIOS()
+        #else
+        return generatePDFMac()
+        #endif
+    }
+
+    #if os(iOS)
+    private func generatePDFIOS() -> Data? {
         let pageWidth: CGFloat = 612
         let pageHeight: CGFloat = 792
         let pdfMeta = [kCGPDFContextCreator: "One Bee Spelling Practice"]
@@ -96,7 +111,7 @@ struct CertificateView: View {
         format.documentInfo = pdfMeta as [String: Any]
         let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: format)
-        let data = renderer.pdfData { ctx in
+        return renderer.pdfData { ctx in
             ctx.beginPage()
             let titleAttr: [NSAttributedString.Key: Any] = [
                 .font: UIFont.boldSystemFont(ofSize: 28),
@@ -106,11 +121,39 @@ struct CertificateView: View {
                 .font: UIFont.systemFont(ofSize: 18),
                 .foregroundColor: UIColor.darkGray
             ]
-            "Certificate of Achievement".draw(at: CGPoint(x: 80, y: 120), withAttributes: titleAttr)
-            "One Bee Spelling Practice".draw(at: CGPoint(x: 80, y: 165), withAttributes: bodyAttr)
-            "This certifies that you have completed the One Bee spelling word list.".draw(at: CGPoint(x: 80, y: 280), withAttributes: bodyAttr)
-            "Congratulations!".draw(at: CGPoint(x: 80, y: 340), withAttributes: titleAttr)
+            drawCertificateLines(titleAttr: titleAttr, bodyAttr: bodyAttr)
         }
-        return data
+    }
+    #endif
+
+    #if os(macOS)
+    private func generatePDFMac() -> Data? {
+        var mediaBox = CGRect(x: 0, y: 0, width: 612, height: 792)
+        let pdfData = NSMutableData()
+        guard let consumer = CGDataConsumer(data: pdfData as CFMutableData),
+              let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
+            return nil
+        }
+        context.beginPDFPage(nil)
+        let titleAttr: [NSAttributedString.Key: Any] = [
+            .font: NSFont.boldSystemFont(ofSize: 28),
+            .foregroundColor: NSColor.black
+        ]
+        let bodyAttr: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 18),
+            .foregroundColor: NSColor.darkGray
+        ]
+        drawCertificateLines(titleAttr: titleAttr, bodyAttr: bodyAttr)
+        context.endPDFPage()
+        context.closePDF()
+        return pdfData as Data
+    }
+    #endif
+
+    private func drawCertificateLines(titleAttr: [NSAttributedString.Key: Any], bodyAttr: [NSAttributedString.Key: Any]) {
+        "Certificate of Achievement".draw(at: CGPoint(x: 80, y: 120), withAttributes: titleAttr)
+        "One Bee Spelling Practice".draw(at: CGPoint(x: 80, y: 165), withAttributes: bodyAttr)
+        "This certifies that you have completed the One Bee spelling word list.".draw(at: CGPoint(x: 80, y: 280), withAttributes: bodyAttr)
+        "Congratulations!".draw(at: CGPoint(x: 80, y: 340), withAttributes: titleAttr)
     }
 }

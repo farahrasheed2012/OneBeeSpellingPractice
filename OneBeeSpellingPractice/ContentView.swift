@@ -1,53 +1,119 @@
 //
 //  ContentView.swift
 //  One Bee Spelling Practice
-//  TabView: Home, Practice, Progress, Parent, Settings. System styling only.
+//  TabView on iOS; sidebar + detail on macOS.
 //
 
 import SwiftUI
 
+private enum AppTab: Int, CaseIterable, Identifiable {
+    case home, practice, progress, parent, settings
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .practice: return "Practice"
+        case .progress: return "Progress"
+        case .parent: return "Parent"
+        case .settings: return "Settings"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: return "house.fill"
+        case .practice: return "pencil.and.list.clipboard"
+        case .progress: return "chart.bar.fill"
+        case .parent: return "person.2.fill"
+        case .settings: return "gearshape.fill"
+        }
+    }
+}
+
 struct ContentView: View {
     @EnvironmentObject var progressStore: ProgressStore
     @EnvironmentObject var settings: SettingsStore
-    @State private var selectedTab = 0
+    @State private var selectedTab: AppTab = .home
 
     var body: some View {
         Group {
             if !settings.hasCompletedOnboarding {
                 OnboardingView()
             } else {
-                TabView(selection: $selectedTab) {
-                    HomeView()
-                        .tabItem {
-                            Label("Home", systemImage: "house.fill")
-                        }
-                        .tag(0)
+                #if os(macOS)
+                macLayout
+                #else
+                iosLayout
+                #endif
+            }
+        }
+    }
 
-                    PracticeTabView()
-                        .tabItem {
-                            Label("Practice", systemImage: "pencil.and.list.clipboard")
-                        }
-                        .tag(1)
+    #if os(iOS)
+    private var iosLayout: some View {
+        TabView(selection: $selectedTab) {
+            HomeView()
+                .tabItem { Label(AppTab.home.title, systemImage: AppTab.home.systemImage) }
+                .tag(AppTab.home)
 
-                    SpellingProgressView()
-                        .tabItem {
-                            Label("Progress", systemImage: "chart.bar.fill")
-                        }
-                        .tag(2)
+            PracticeTabView()
+                .tabItem { Label(AppTab.practice.title, systemImage: AppTab.practice.systemImage) }
+                .tag(AppTab.practice)
 
-                    ParentTabView()
-                        .tabItem {
-                            Label("Parent", systemImage: "person.2.fill")
-                        }
-                        .tag(3)
+            SpellingProgressView()
+                .tabItem { Label(AppTab.progress.title, systemImage: AppTab.progress.systemImage) }
+                .tag(AppTab.progress)
 
-                    SettingsView()
-                        .tabItem {
-                            Label("Settings", systemImage: "gearshape.fill")
-                        }
-                        .tag(4)
+            ParentTabView()
+                .tabItem { Label(AppTab.parent.title, systemImage: AppTab.parent.systemImage) }
+                .tag(AppTab.parent)
+
+            SettingsView()
+                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.systemImage) }
+                .tag(AppTab.settings)
+        }
+    }
+    #endif
+
+    #if os(macOS)
+    private var macLayout: some View {
+        NavigationSplitView {
+            List(selection: $selectedTab) {
+                Section("One Bee Spelling") {
+                    ForEach(AppTab.allCases) { tab in
+                        Label(tab.title, systemImage: tab.systemImage)
+                            .tag(tab)
+                    }
                 }
             }
+            .listStyle(.sidebar)
+            .navigationTitle("One Bee Spelling")
+            .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
+        } detail: {
+            tabRoot(for: selectedTab)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.appGroupedBackground)
+        }
+        .navigationSplitViewStyle(.balanced)
+        .frame(minWidth: 960, minHeight: 640)
+    }
+    #endif
+
+    @ViewBuilder
+    private func tabRoot(for tab: AppTab) -> some View {
+        switch tab {
+        case .home:
+            HomeView()
+        case .practice:
+            PracticeTabView()
+        case .progress:
+            SpellingProgressView()
+        case .parent:
+            ParentTabView()
+        case .settings:
+            SettingsView()
         }
     }
 }
@@ -63,13 +129,13 @@ struct PracticeTabView: View {
         let limit = settings.wordsPerSession > 0 ? settings.wordsPerSession : filtered.count
         return wordRepository.sessionWords(limit: limit, progressStore: progressStore, preferNeedingWork: true, difficultyFilter: settings.difficultyFilter)
     }
-    
+
     private var fallbackWords: [SpellingWord] {
         wordRepository.words(forFilter: settings.difficultyFilter)
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section {
                     NavigationLink(destination: PracticeView(words: sessionWords.isEmpty ? fallbackWords : sessionWords).environmentObject(progressStore).environmentObject(settings)) {
@@ -94,8 +160,9 @@ struct PracticeTabView: View {
                     Text("Practice Modes")
                 }
             }
-            .listStyle(.insetGrouped)
+            .platformListStyle()
             .navigationTitle("Practice")
+            .largeNavigationBarTitle()
         }
     }
 }
@@ -107,7 +174,7 @@ struct ParentTabView: View {
     @EnvironmentObject var wordRepository: WordRepository
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ParentDashboardView()
                 .environmentObject(progressStore)
                 .environmentObject(settings)

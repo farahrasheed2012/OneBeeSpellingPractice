@@ -78,7 +78,7 @@ struct ListeningModeView: View {
                             progressStore.markPracticed(wordId: currentWord.id)
                             if correct {
                                 progressStore.markCompleted(wordId: currentWord.id)
-                                if settings.hapticEnabled { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
+                                if settings.hapticEnabled { HapticFeedback.impact(.medium) }
                                 showCelebration = true
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { showCelebration = false; showResult = true }
                             } else {
@@ -108,7 +108,7 @@ struct ListeningModeView: View {
             }
         }
         .navigationTitle("👂 Listening Mode")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
     
     private var resultCard: some View {

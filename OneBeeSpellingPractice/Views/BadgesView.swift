@@ -49,6 +49,6 @@ struct BadgesView: View {
             }
         }
         .navigationTitle("Badges")
-        .navigationBarTitleDisplayMode(.large)
+        .largeNavigationBarTitle()
     }
 }

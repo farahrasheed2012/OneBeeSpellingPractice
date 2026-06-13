@@ -86,7 +86,7 @@ struct PracticeView: View {
                 }
             }
             .navigationTitle("✏️ Practice")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
             .onAppear {
                 if sessionStartTime == nil { sessionStartTime = Date() }
             }
@@ -162,7 +162,7 @@ struct PracticeView: View {
                 .foregroundColor(theme.primaryText)
                 .multilineTextAlignment(.center)
                 .padding(20)
-                .background(Color(UIColor.systemGray6))
+                .background(PlatformColor.systemGray6)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .autocorrectionDisabled()
                 .modifier(NeverCapitalizationModifier())
@@ -239,8 +239,7 @@ struct PracticeView: View {
         if isCorrect {
             progressStore.markCompleted(wordId: currentWord.id)
             if settings.hapticEnabled {
-                let gen = UIImpactFeedbackGenerator(style: .medium)
-                gen.impactOccurred()
+                HapticFeedback.impact(.medium)
             }
             showCelebration = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {

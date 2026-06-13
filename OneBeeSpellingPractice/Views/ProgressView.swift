@@ -28,7 +28,7 @@ struct SpellingProgressView: View {
                 }
             }
             .navigationTitle("⭐ My Progress")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
         }
     }
     

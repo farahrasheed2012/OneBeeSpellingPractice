@@ -46,7 +46,7 @@ struct LeaderboardView: View {
             }
         }
         .navigationTitle("Leaderboard")
-        .navigationBarTitleDisplayMode(.large)
+        .largeNavigationBarTitle()
         .onAppear {
             leaderboardStore.updateCurrentUser(completedCount: progressStore.completedCount, totalStars: progressStore.totalStars, currentStreak: progressStore.currentStreak)
         }

@@ -111,7 +111,7 @@ struct LetterByLetterView: View {
             }
         }
         .navigationTitle("Letter by Letter")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
     }
     
     private var resultCard: some View {
@@ -136,7 +136,7 @@ struct LetterByLetterView: View {
         progressStore.markPracticed(wordId: currentWord.id)
         if isCorrect {
             progressStore.markCompleted(wordId: currentWord.id)
-            if settings.hapticEnabled { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
+            if settings.hapticEnabled { HapticFeedback.impact(.medium) }
             showCelebration = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { showCelebration = false; showResult = true }
         } else {
